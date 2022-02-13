@@ -1,8 +1,29 @@
-# joystick++
+# joystick to UDP
 
-A minimal C++ object-oriented API onto joystick devices under Linux.
+A minimal C++ object-oriented API onto joystick devices under Linux. This fork is aimed at sending joystick commands as RC values (1000-2000) over UDP to a flight controller. In this case it was used to fly a drone on [AirSim](https://github.com/microsoft/AirSim) with [betaflight](https://github.com/betaflight/betaflight) as the firmware.
 
-# usage
+## Build 
+```
+g++ joystick_to_socket.cpp joystick.cc -o joy2sock
+```
+## Run
+This was tested on ubuntu 20.04, rx:FS-IA6B, tx:FS-I6 but should be easy enough to extrapolate:
+
+1. Connect the receiver using a USB to TTL cable as shown below  and bind it to the transmitter:
+![](rxconfig.jpeg)
+
+2. Run these commands to recognise the joystick as input device:
+```
+sudo modprobe serio
+sudo inputattach --fsia6b /dev/ttyUSB0 &
+```
+You might need to identify your axes and figure out the attached device name (/dev/input/jsx) using `jstest-gtk`.
+[Thank you for 1,2](https://olayasturias.github.io/flysky/fs-i6x/phdstuff/2020/07/21/flysky-linux.html)
+
+3. Run joy2sock `./joy2sock`
+
+
+## Orginal repo API
 
 Create an instance of `Joystick`:
 
@@ -30,7 +51,7 @@ if (joystick.sample(&event))
 }
 ```
 
-# example
+## example
 
 You might run this in a loop:
 
@@ -65,7 +86,7 @@ This produces something similar to:
     Axis 2 is at position 9796
     Axis 3 is at position -13850
 
-# options
+## options
 
 You can specify the particular joystick by id:
 
@@ -80,7 +101,7 @@ Or provide a specific device name:
 Joystick js0("/dev/input/js0");
 ```
 
-# license
+## license
 
 Released under [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
 
